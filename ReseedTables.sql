@@ -1,9 +1,15 @@
 
 CREATE PROCEDURE ReseedTables AS
 BEGIN
-
 SELECT 'DECLARE @DynamicSQL varchar(max) 
+IF ((SELECT COUNT(' + c.name + ') FROM ' + s.name + '.' + t.name + ') > 0)
+	PRINT ''
+	''
 SELECT @DynamicSQL = ''DBCC CHECKIDENT(''''' + s.name + '.' + t.name + ''''', reseed, '' + CAST(MAX(' + c.name + ') AS VARCHAR(50)) + '')'' FROM ' + s.name + '.' + t.name + ' 
+IF ((SELECT COUNT(' + c.name + ') FROM ' + s.name + '.' + t.name + ') > 0)
+	PRINT ''RESEEDING ' + s.name + '.' + t.name + '
+-------------
+''
 EXECUTE( @DynamicSQL )' AS Commands
 INTO #ReseedCommands
 FROM sys.schemas AS s
@@ -12,6 +18,8 @@ INNER JOIN sys.tables AS t
 INNER JOIN sys.columns AS c
     ON c.[object_id] = t.[object_id]
 WHERE c.is_identity = 1
+
+
 DECLARE @DynamicSQL varchar(MAX)
 DECLARE @reseedIndex AS CURSOR
 SET @reseedIndex = CURSOR FOR
