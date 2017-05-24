@@ -36,3 +36,5 @@ DEALLOCATE @reseedIndex
 DROP TABLE #ReseedCommands
 
 END
+
+GO
